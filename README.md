@@ -1,11 +1,11 @@
 # OldSalmo
 
-Custom scripts employed for the manuscript:
+Custom scripts used for the manuscript:
 
 **"What Modern Genomes Overlook: Ancient DNA Rewrites the Phylogeography of European Atlantic Salmon (*Salmo salar*)"**  
 García-Souto et al.
 
-This repository contains custom Python scripts used for processing and simulating genomic data in the context of ancient DNA analyses of Atlantic salmon.
+This repository contains custom Python scripts developed for processing and simulating genomic data in the context of ancient DNA analyses of Atlantic salmon.
 
 ---
 
@@ -19,74 +19,111 @@ This script converts diploid genotypes from a VCF file into pseudo-haploid genot
 
 Pseudo-haploidization is commonly applied to low-coverage ancient DNA datasets to reduce biases associated with genotype uncertainty and differences in sequencing depth between ancient and modern samples.
 
-The script retains VCF header information and generates a new VCF containing only the genotype (`GT`) field.
+The script:
+
+- Retains the original VCF header information.
+- Converts heterozygous genotypes into randomly sampled homozygous states.
+- Keeps only the genotype (`GT`) field in the output VCF.
 
 ---
 
 ## Input and output
 
-Before running the script, modify the input and output filenames according to your dataset:
+Before running the script, modify the input and output filenames in the script:
 
 ```python
 input_vcf = "pruned.filtered.vcf.gz"
 output_vcf = "pruned.pseudoHapl.vcf"
+```
 
 ## Reproducibility
 
-Pseudo-haploidization involves random allele sampling. To ensure reproducibility, a fixed random seed is defined in the script:
+Pseudo-haploidization involves random allele sampling. To ensure reproducibility, a fixed random seed is defined:
 
+```python
 random_seed = 12345
 random.seed(random_seed)
+```
 
 Changing the seed value will generate a different pseudo-haploid representation.
 
-Usage
-python pseudoHaploidize.py```
+## Usage
+
+Run the script with:
+
+```bash
+python pseudoHaploidize.py
+```
 
 ---
 
-## 2. Ancient DNA damage simulation
+## 2. Simulation of ancient DNA damage
 
-### `simulate_damage.py
+### `simulate_damage.py`
 
 This script introduces simulated ancient DNA damage patterns into a VCF file.
 
 The simulation models common post-mortem deamination patterns observed in ancient DNA datasets:
 
-C→T substitutions
-G→A substitutions
+- C→T substitutions
+- G→A substitutions
 
-Reference alleles are randomly converted into alternative alleles according to a user-defined damage rate. This allows testing the potential impact of ancient DNA damage on downstream population genomic analyses.
+Reference alleles are randomly converted into alternative alleles according to a user-defined damage probability. This allows testing the potential impact of ancient DNA damage on downstream population genomic analyses.
 
-Only simple diploid genotypes (0/0, 0/1, 1/0, and 1/1) are modified. Other genotype configurations are retained unchanged.
+Only simple diploid genotypes are modified:
+
+```text
+0/0
+0/1
+1/0
+1/1
+```
+
+Other genotype configurations are retained unchanged.
 
 ---
 
-### Input and output
+## Input and output
 
 The script requires three mandatory arguments:
 
-Input VCF file (gzip compressed)
-Output VCF file (gzip compressed)
-Damage rate (probability of introducing simulated damage)
+| Argument | Description |
+|---|---|
+| Input VCF | Input VCF file (gzip compressed) |
+| Output VCF | Output damaged VCF file (gzip compressed) |
+| Damage rate | Probability of introducing simulated damage at susceptible sites |
 
-### Example:
+---
 
-```Python
-    simulate_damage.py \
+## Usage example
+
+```bash
+python simulate_damage.py \
     input.vcf.gz \
     damaged.vcf.gz \
-    0.05```
+    0.05
+```
 
-where 0.05 corresponds to a 5% probability of introducing damage at susceptible sites.
+where:
 
-### Reproducibility
+```text
+0.05 = 5% probability of introducing damage
+```
 
-Because damage introduction is based on random sampling, a random seed can be specified using the --seed option.
+at susceptible sites.
 
-```Python
-    simulate_damage.py \
+---
+
+## Reproducibility
+
+Because damage introduction is based on random sampling, a random seed can be specified using the `--seed` option:
+
+```bash
+python simulate_damage.py \
     input.vcf.gz \
     damaged.vcf.gz \
     0.05 \
-    --seed 12345```
+    --seed 12345
+```
+
+Using the same seed will generate identical simulated damage patterns.
