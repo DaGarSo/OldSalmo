@@ -51,6 +51,10 @@ python pseudoHaploidize.py
 2. Ancient DNA damage simulation
 simulate_damage.py
 
+## 2. Simulation of ancient DNA damage
+
+### `simulate_damage.py`
+
 This script introduces simulated ancient DNA damage patterns into a VCF file.
 
 The simulation models common post-mortem deamination patterns observed in ancient DNA datasets:
@@ -101,9 +105,6 @@ python simulate_damage.py \
 
 Using the same seed will generate identical simulated damage patterns.
 
-
-Además, para un repositorio de GitHub de manuscrito añadiría al final una sección breve de **Requirements** y **License/Data availability** si el objetivo es que otros investigadores puedan reutilizarlo. Por ejemplo:
-
 ```markdown
 # Requirements
 
@@ -112,8 +113,3 @@ Además, para un repositorio de GitHub de manuscrito añadiría al final una sec
   - `random`
   - `gzip`
   - `argparse`
-
-# Data availability
-
-The scripts provided here are intended for reproducibility of analyses described in García-Souto et al. Input ge
-
