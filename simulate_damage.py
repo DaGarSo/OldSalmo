@@ -1,138 +1,114 @@
 #!/usr/bin/env python3
 
-"""
-Simulate ancient DNA damage patterns in a VCF file.
-
-This script introduces C>T and G>A substitutions into reference alleles
-at a user-defined rate, mimicking common ancient DNA deamination patterns.
-
-Input and output files should be provided as arguments.
-A random seed can be specified to ensure reproducibility.
-"""
-
 import gzip
 import random
-import argparse
+import sys
 
+############################################################
+# ARGUMENTS
+############################################################
 
-def damage_gt(gt, ref, alt, damage_rate):
-    """
-    Introduce simulated deamination damage into diploid genotypes.
+input_vcf = sys.argv[1]
+output_vcf = sys.argv[2]
+damage_rate = float(sys.argv[3])
 
-    C>T and G>A substitutions are simulated by randomly converting reference
-    alleles (0) into alternative alleles (1) according to the specified
-    damage rate.
+# Optional random seed
+if len(sys.argv) > 4:
+    random.seed(int(sys.argv[4]))
 
-    Non-standard genotypes are returned unchanged.
-    """
+############################################################
+# FUNCTION
+############################################################
 
-    # Only process simple diploid genotypes
-    if gt not in ["0/0", "0/1", "1/0", "1/1"]:
+def damage_gt(gt, ref, alt):
+
+    # Only haploid genotypes
+    if gt not in ["0", "1"]:
         return gt
 
-    # C>T damage pattern
+    ############################################################
+    # C <-> T
+    ############################################################
+
     if ref == "C" and alt == "T":
-        target = "1"
 
-    # G>A damage pattern
-    elif ref == "G" and alt == "A":
-        target = "1"
+        # Reference C becomes ALT T
+        if gt == "0" and random.random() < damage_rate:
+            return "1"
 
-    else:
         return gt
 
-    alleles = gt.replace("|", "/").split("/")
+    elif ref == "T" and alt == "C":
 
-    damaged_alleles = []
+        # ALT C becomes reference T
+        if gt == "1" and random.random() < damage_rate:
+            return "0"
 
-    for allele in alleles:
+        return gt
 
-        # Convert reference alleles into damaged alleles at the specified rate
-        if allele == "0" and random.random() < damage_rate:
-            damaged_alleles.append(target)
-        else:
-            damaged_alleles.append(allele)
+    ############################################################
+    # G <-> A
+    ############################################################
 
-    return "/".join(damaged_alleles)
+    elif ref == "G" and alt == "A":
 
+        # Reference G becomes ALT A
+        if gt == "0" and random.random() < damage_rate:
+            return "1"
 
-def main():
+        return gt
 
-    parser = argparse.ArgumentParser(
-        description="Simulate ancient DNA damage patterns in a VCF file."
-    )
+    elif ref == "A" and alt == "G":
 
-    parser.add_argument(
-        "input_vcf",
-        help="Input VCF file (gzip compressed)"
-    )
+        # ALT G becomes reference A
+        if gt == "1" and random.random() < damage_rate:
+            return "0"
 
-    parser.add_argument(
-        "output_vcf",
-        help="Output damaged VCF file (gzip compressed)"
-    )
+        return gt
 
-    parser.add_argument(
-        "damage_rate",
-        type=float,
-        help="Probability of introducing damage (e.g. 0.05)"
-    )
+    ############################################################
+    # Other SNPs
+    ############################################################
 
-    parser.add_argument(
-        "--seed",
-        type=int,
-        default=12345,
-        help="Random seed for reproducibility (default: 12345)"
-    )
+    return gt
 
-    args = parser.parse_args()
+############################################################
+# PROCESS VCF
+############################################################
 
-    # Set random seed for reproducibility
-    random.seed(args.seed)
+# Input can be gzipped (BGZF is also readable by gzip)
+with gzip.open(input_vcf, "rt") as fin, open(output_vcf, "w") as fout:
 
-    with gzip.open(args.input_vcf, "rt") as fin, \
-         gzip.open(args.output_vcf, "wt") as fout:
+    for line in fin:
 
-        for line in fin:
+        if line.startswith("#"):
+            fout.write(line)
+            continue
 
-            # Preserve VCF header lines
-            if line.startswith("#"):
-                fout.write(line)
-                continue
+        fields = line.rstrip().split("\t")
 
-            fields = line.rstrip().split("\t")
+        ref = fields[3]
+        alt = fields[4]
 
-            chrom, pos, vid, ref, alt = fields[:5]
+        # Skip multiallelic sites
+        if "," in alt:
+            fout.write(line)
+            continue
 
-            samples = fields[9:]
-            samples_new = []
+        samples_new = []
 
-            for sample in samples:
+        for sample in fields[9:]:
 
-                genotype_fields = sample.split(":")
-                gt = genotype_fields[0]
+            parts = sample.split(":")
 
-                new_gt = damage_gt(
-                    gt,
-                    ref,
-                    alt,
-                    args.damage_rate
-                )
+            gt = parts[0]
 
-                # Preserve additional FORMAT fields
-                remaining_fields = genotype_fields[1:]
+            new_gt = damage_gt(gt, ref, alt)
 
-                if remaining_fields:
-                    new_sample = new_gt + ":" + ":".join(remaining_fields)
-                else:
-                    new_sample = new_gt
+            parts[0] = new_gt
 
-                samples_new.append(new_sample)
+            samples_new.append(":".join(parts))
 
-            fields[9:] = samples_new
+        fields[9:] = samples_new
 
-            fout.write("\t".join(fields) + "\n")
-
-
-if __name__ == "__main__":
-    main()
+        fout.write("\t".join(fields) + "\n")
