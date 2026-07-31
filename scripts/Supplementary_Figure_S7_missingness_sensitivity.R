@@ -1,5 +1,5 @@
 ###############################################################
-# Supplementary Figure S6
+# Supplementary Figure S7
 #
 # Missingness sensitivity analysis:
 # Ancient vs modern Spain-Cant PCA displacement
@@ -10,7 +10,7 @@
 #   data/sensitivity_missingness/
 #
 # Output:
-#   figures/Supplementary_Fig_S6.pdf
+#   figures/Supplementary_Fig_S7.pdf
 #
 ###############################################################
 
