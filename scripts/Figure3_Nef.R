@@ -4,7 +4,7 @@
 # Mitochondrial nucleotide diversity (π) and effective
 # population size (Ne) estimates for Atlantic salmon
 #
-# García-Souto et al.
+# OldSalmo project
 #
 # Calculates:
 # - Corrected nucleotide diversity (π)
