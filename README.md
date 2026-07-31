@@ -2,18 +2,31 @@
 
 Custom scripts used for the manuscript:
 
-**"What Modern Genomes Overlook: Ancient DNA Rewrites the Phylogeography of European Atlantic Salmon (*Salmo salar*)"**  
+**"What Modern Genomes Overlook: Ancient DNA Rewrites the Phylogeography of European Atlantic Salmon (Salmo salar)"**  
 García-Souto et al.
-
-This repository contains custom Python scripts developed for processing and simulating genomic data in the context of ancient DNA analyses of Atlantic salmon.
 
 ---
 
-# Scripts
+## Overview
+
+This repository contains custom scripts developed for the processing, simulation, quality control, and visualization of genomic data in the context of ancient DNA analyses of Atlantic salmon (*Salmo salar*).
+
+The repository includes:
+
+- Custom Python scripts for ancient DNA data processing and simulation.
+- Shell scripts for genomic quality-control analyses.
+- R scripts to reproduce all main and supplementary figures presented in the manuscript.
+- Code used for sensitivity analyses evaluating the impact of missing data and ancient DNA damage on population genomic inference.
+
+All scripts are provided to facilitate reproducibility of the analyses described in the manuscript.
+
+---
+
+# Custom Scripts
 
 ## 1. Pseudo-haploidization of VCF files
 
-### `pseudoHaploidize.py`
+### `scripts/pseudoHaploidize.py`
 
 This script converts diploid genotypes from a VCF file into pseudo-haploid genotypes by randomly sampling one allele from each heterozygous genotype.
 
@@ -59,7 +72,7 @@ python pseudoHaploidize.py
 
 ## 2. Simulation of ancient DNA damage
 
-### `simulate_damage.py`
+### `scripts/simulate_damage.py`
 
 This script introduces simulated ancient DNA damage patterns into a VCF file.
 
@@ -126,4 +139,29 @@ python simulate_damage.py \
     --seed 12345
 ```
 
-Using the same seed will generate identical simulated damage patterns.
+## 3. Ti/Tv calculation
+
+### `scripts/calculate_ti_tv_by_sample.sh`
+
+Script used to calculate transition/transversion ratios for each individual from a VCF file.
+
+The script extracts:
+
+REF and ALT alleles.
+Individual genotypes.
+Counts of nucleotide substitutions.
+Transition (Ti) and transversion (Tv) rates.
+Ti/Tv ratio per sample.
+
+---
+
+## Usage example
+
+```bash scripts/calculate_ti_tv_by_sample.sh input.vcf.gz output_prefix```
+
+---
+
+## Outputs:
+
+output_prefix.snp_gt_matrix.tsv
+output_prefix.ti_tv_by_sample.tsv
