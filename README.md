@@ -74,25 +74,27 @@ python pseudoHaploidize.py
 
 ### `scripts/simulate_damage.py`
 
-This script introduces simulated ancient DNA damage patterns into a VCF file.
+This script introduces simulated ancient DNA damage patterns in pseudo-haploid VCF files.
 
-The simulation models common post-mortem deamination patterns observed in ancient DNA datasets:
+The simulation is designed for low-coverage ancient DNA datasets, where genotypes have previously been converted into pseudo-haploid states. The script introduces nucleotide misincorporations characteristic of ancient DNA damage:
 
 - C→T substitutions
+- T→C substitutions
 - G→A substitutions
+- A→G substitutions
 
 Reference alleles are randomly converted into alternative alleles according to a user-defined damage probability. This allows testing the potential impact of ancient DNA damage on downstream population genomic analyses.
 
-Only simple diploid genotypes are modified:
+The script operates on haploid genotypes:
 
 ```text
-0/0
-0/1
-1/0
-1/1
+0
+1
 ```
 
-Other genotype configurations are retained unchanged.
+and randomly changes alleles according to a user-defined damage probability.
+
+Input VCF files must therefore be pseudo-haploidized before applying damage simulat
 
 ---
 
