@@ -26,7 +26,7 @@ All scripts are provided to facilitate reproducibility of the analyses described
 
 ## 1. Pseudo-haploidization of VCF files
 
-### `pseudoHaploidize.py`
+### `scripts/pseudoHaploidize.py`
 
 This script converts diploid genotypes from a VCF file into pseudo-haploid genotypes by randomly sampling one allele from each heterozygous genotype.
 
@@ -72,7 +72,7 @@ python pseudoHaploidize.py
 
 ## 2. Simulation of ancient DNA damage
 
-### `simulate_damage.py`
+### `scripts/simulate_damage.py`
 
 This script introduces simulated ancient DNA damage patterns into a VCF file.
 
