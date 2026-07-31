@@ -157,8 +157,7 @@ Ti/Tv ratio per sample.
 
 ## Usage example
 
-```bash scripts/calculate_ti_tv_by_sample.sh input.vcf.gz output_prefix
-```
+```bash scripts/calculate_ti_tv_by_sample.sh input.vcf.gz output_prefix```
 
 ---
 
